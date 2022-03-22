@@ -30,6 +30,39 @@ local html = {}
 
 local quit = utils.quit
 
+
+local template_env = {
+   ipairs = ipairs,
+   pairs = pairs,
+   next = next,
+   select = select,
+   string = string,
+   table = table,
+   math = math,
+   print = print,
+   unpack = unpack,
+   pack = utils.pack,
+   pl = {
+      utils = require 'pl.utils',
+      array2d = require 'pl.array2d',
+      func = require 'pl.func',
+      lexer = require 'pl.lexer',
+      operator = require 'pl.operator',
+      permute = require 'pl.permute',
+      pretty = {
+          write = (require 'pl.pretty').write
+      },
+      seq = require 'pl.seq',
+      sip = require 'pl.sip',
+      stringx = require 'pl.stringx',
+      tablex = require 'pl.tablex',
+      types = require 'pl.types',
+      url = require 'pl.url',
+      xml = require 'pl.xml',
+   },
+}
+
+
 local function cleanup_whitespaces(text)
    local lines = stringx.splitlines(text)
    for i = 1, #lines do
@@ -283,6 +316,7 @@ function ldoc.source_ref (fun)
       local out, err = template.substitute(template_str, {
          ldoc = ldoc,
          module = module,
+         _parent = template_env,
          _escape = ldoc.template_escape
       })
       if not out then
@@ -298,9 +332,6 @@ function ldoc.source_ref (fun)
 
    local css, custom_css = ldoc.css, ldoc.custom_css
    ldoc.output = args.output
-   ldoc.ipairs = ipairs
-   ldoc.pairs = pairs
-   ldoc.print = print
 
    -- Bang out the index.
    -- in single mode there is one module and the 'index' is the
@@ -393,4 +424,3 @@ function ldoc.source_ref (fun)
 end
 
 return html
-
